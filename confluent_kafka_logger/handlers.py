@@ -169,7 +169,3 @@ class KafkaLoggingHandler(logging.Handler):
     def flush(self):
         if hasattr(self, "producer"):
             self.producer.flush()
-
-    def close(self):
-        """Close the handler."""
-        logging.Handler.close(self)
