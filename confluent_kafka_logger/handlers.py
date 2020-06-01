@@ -33,6 +33,7 @@ class KafkaLoggingHandler(logging.Handler):
         additional_fields=None,
         log_preprocess=None,
         internal_logger_level="INFO",
+        delivery_timeout=2,
     ):
         """
         Initialize the handler.
@@ -52,6 +53,8 @@ class KafkaLoggingHandler(logging.Handler):
                 ...preprocess[1](preprocess[0](raw_log))...
             internal_logger_level (str, optional):
                 internal logger loglevel.
+            delivery_timeout (int, optional):
+                delivery timeout in seconds.
 
         Raises:
             KafkaLoggerException: in case of incorrect logger configuration
@@ -70,6 +73,7 @@ class KafkaLoggingHandler(logging.Handler):
         if security_protocol == "SSL" and ssl_cafile is None:
             raise KafkaLoggerException("SSL CA file isn't provided.")
         self.kafka_topic_name = topic
+        self.delivery_timeout_sec = delivery_timeout
         extended_producer_config = extended_producer_config or {}
         producer_config = {
             "bootstrap.servers": hosts_list,
@@ -77,7 +81,7 @@ class KafkaLoggingHandler(logging.Handler):
             "ssl.ca.location": ssl_cafile,
             "key.serializer": StringSerializer("utf_8"),
             "value.serializer": lambda msg, _: json.dumps(msg).encode("utf-8"),
-            "delivery.timeout.ms": 4000,
+            "delivery.timeout.ms": self.delivery_timeout_sec * 1000,
             "error_cb": self.error_callback,
         }
         producer_config.update(extended_producer_config)
@@ -156,16 +160,20 @@ class KafkaLoggingHandler(logging.Handler):
             record: Logging message
         """
         record_dict = self.prepare_record_dict(record)
-        self.producer.produce(
-            self.kafka_topic_name, value=record_dict, on_delivery=self.error_callback
-        )
+        try:
+            self.producer.produce(
+                self.kafka_topic_name, value=record_dict, on_delivery=self.error_callback
+            )
+            self.producer.poll(0)
+        except BufferError:
+            self._internal_logger.error("Confluent kafka queue is full, logs will be lost.")
 
     def error_callback(self, err, msg=None):
         if err:
-            self._internal_logger.warning(err)
+            self._internal_logger.error(err)
         if msg:
             self._internal_logger.debug(msg)
 
     def flush(self):
         if hasattr(self, "producer"):
-            self.producer.flush()
+            self.producer.flush(self.delivery_timeout_sec + 0.1)
