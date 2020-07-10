@@ -2,6 +2,10 @@
 .idea/*
 *.egg-info
 *.egg-info/*
+.eggs
+.eggs/*
+build
+build/*
 dist
 dist/*
 .tox
