@@ -86,7 +86,7 @@ or via dict config
         }
     },
     'loggers': {
-        'django': {
+        'service': {
             'level': 'INFO',
             'handlers': ['kafka'],
             'propagate': True,
