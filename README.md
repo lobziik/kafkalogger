@@ -10,7 +10,7 @@ Inspired by [kafka-logging-hanlder](https://github.com/redhat-aqe/kafka-logging-
 
 Known issues and limitations
 ------------
- - In case of connection issues it will be reported to stdout via separate internal logger
+ - In case of connection issues it will be reported to stderr via separate internal logger
  - Only `SSL` and `PLAINTEXT` security protocols was tested.
 
 Installation

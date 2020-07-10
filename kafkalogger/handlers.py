@@ -93,7 +93,7 @@ class KafkaLoggingHandler(logging.Handler):
 
     @staticmethod
     def _init_internal_logger(level="INFO"):
-        internal_handler = logging.StreamHandler(sys.stdout)
+        internal_handler = logging.StreamHandler(sys.stderr)
         internal_handler.setLevel(level)
         internal_handler.setFormatter(
             logging.Formatter("[%(asctime)s] [%(process)s] [%(name)s] [%(levelname)s]: %(message)s")
