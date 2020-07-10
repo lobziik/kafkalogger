@@ -1,7 +1,7 @@
 Confluent Kafka Logging Handler
 =====================
 
-Python logger handler which using [Confluent Kafka](https://github.com/confluentinc/confluent-kafka-python) client under the hood.
+Python logger handler that uses [Confluent Kafka](https://github.com/confluentinc/confluent-kafka-python) client under the hood.
 Check possible [configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md) options, if necessary.
 
 
@@ -11,7 +11,7 @@ Inspired by [kafka-logging-hanlder](https://github.com/redhat-aqe/kafka-logging-
 Known issues and limitations
 ------------
  - In case of connection issues it will be reported to stderr via separate internal logger
- - Only `SSL` and `PLAINTEXT` security protocols was tested.
+ - Only `SSL` and `PLAINTEXT` security protocols were tested.
 
 Installation
 ------------
