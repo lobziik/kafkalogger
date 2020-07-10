@@ -18,7 +18,7 @@ Installation
 
 The current stable release:
 
-    pip install kafkalogger
+    pip install git+https://github.com/lobziik/kafkalogger.git
 
 
 Handler configuration options
